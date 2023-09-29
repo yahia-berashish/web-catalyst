@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String             @id @default(uuid())
+  username  String
+  email     String             @unique
+  password  String             @unique
+  libraries ComponentLibrary[]
+}
+
+model ComponentLibraryConfig {
+  id        String           @id @default(uuid())
+  library   ComponentLibrary @relation(fields: [libraryId], references: [id])
+  libraryId String           @unique
+}
+
+model ComponentLibrary {
+  id     String  @id @default(uuid())
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  name        String
+  components  Component[]
+  config      ComponentLibraryConfig?
+  framework   Framework               @relation(fields: [frameworkId], references: [id])
+  frameworkId String
+}
+
+model Component {
+  id                 Int               @id @default(autoincrement())
+  name               String
+  library            ComponentLibrary? @relation(fields: [libraryId], references: [id])
+  libraryId          String?
+  frameworkLibrary   FrameworkLibrary  @relation(fields: [frameworkLibraryId], references: [id])
+  frameworkLibraryId String
+
+  @@unique([name, libraryId])
+}
+
+model Framework {
+  id               String             @id @default(uuid())
+  name             String
+  libraries        FrameworkLibrary[]
+  componentLibrary ComponentLibrary[]
+}
+
+model FrameworkLibrary {
+  id          String      @id @default(uuid())
+  name        String
+  framework   Framework   @relation(fields: [frameworkId], references: [id])
+  frameworkId String
+  components  Component[]
+
+  @@unique([name, frameworkId])
+}
