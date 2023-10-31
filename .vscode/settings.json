@@ -1,0 +1,11 @@
+{
+  "cSpell.words": ["nextauth", "signup", "sonner"],
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "web-catalyst-dev",
+      "database": "${workspaceFolder:web-catalyst}/prisma/dev.db"
+    }
+  ]
+}
